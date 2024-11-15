@@ -2,7 +2,7 @@
 #define _M1S_H
 
 /*
- VERSION 0.0.2
+ VERSION 0.0.3
   
  This is a base library made by m1cha1s.
  Features:
@@ -79,6 +79,11 @@ typedef struct Quad
 #define ToLower(c) (((c) >= 'A' && (c) <= 'Z') ? ((c)+32) : (c))
 #define ToUpper(c) (((c) >= 'a' && (c) <= 'z') ? ((c)-32) : (c))
 #define IsWhitespace(c) ((c) == ' ' || (c) == '\t' || (c) == '\n')
+
+#define STR2(s) #s
+#define STR(s) STR2(s)
+#define JOIN2(a,b) a##b
+#define JOIN(a,b) JOIN2(a,b)
 
 /* --- Memory --- */
 
