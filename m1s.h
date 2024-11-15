@@ -2,11 +2,12 @@
 #define _M1S_H
 
 /*
- VERSION 0.0.1
+ VERSION 0.0.2
   
  This is a base library made by m1cha1s.
  Features:
  - Nicer types
+ - Utility macros
  - Vectors (like in math)
  - Arena allocators
  - Dynamic arrays (STB style)
@@ -68,6 +69,16 @@ typedef struct Quad
 {
     Vec2 p0, p1;
 } Quad;
+
+/* --- Utils --- */
+
+#define Abs(val) ((val) < 0 ? -(val) : (val))
+#define Min(a,b) ((a) < (b) ? (a) : (b))
+#define Max(a,b) ((a) > (b) ? (a) : (b))
+#define Len(arr) (sizeof(arr)/sizeof(*(arr)))
+#define ToLower(c) (((c) >= 'A' && (c) <= 'Z') ? ((c)+32) : (c))
+#define ToUpper(c) (((c) >= 'a' && (c) <= 'z') ? ((c)-32) : (c))
+#define IsWhitespace(c) ((c) == ' ' || (c) == '\t' || (c) == '\n')
 
 /* --- Memory --- */
 
