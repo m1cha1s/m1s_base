@@ -2,7 +2,7 @@
 #define _M1S_H
 
 /*
- VERSION 0.0.3
+ VERSION 0.0.4
   
  This is a base library made by m1cha1s.
  Features:
@@ -17,6 +17,14 @@
 // NOTE(m1cha1s): Is not necessarely required...
 #include <stdint.h>
 #include <stddef.h>
+
+#ifndef M1S_ALLOC(s)
+#define M1S_ALLOC(s) malloc(s)
+#endif
+
+#ifndef M1S_FREE(p)
+#define M1S_FREE(p) free(p)
+#endif
 
 /* --- Some typedefs --- */
 
@@ -178,9 +186,9 @@ void *ArenaAlloc(Arena *arena, usize size)
 {
     if ((!arena->first) || (!arena->current))
     {
-        arena->first = arena->current = PlatformAlloc(sizeof(ArenaBlock));
+        arena->first = arena->current = M1S_ALLOC(sizeof(ArenaBlock));
         usize size = PlatformGetPageSize();
-        arena->first->block = PlatformAlloc(size);
+        arena->first->block = M1S_ALLOC(size);
         arena->first->size = size;
         arena->first->end = 0;
         arena->first->next = NULL;
@@ -190,10 +198,10 @@ void *ArenaAlloc(Arena *arena, usize size)
     {
         if (!arena->current->next)
         {
-            arena->current->next = PlatformAlloc(sizeof(ArenaBlock));
+            arena->current->next = M1S_ALLOC(sizeof(ArenaBlock));
             
             usize s = (size > PlatformGetPageSize()) ? size : PlatformGetPageSize();
-            arena->current->next->block = PlatformAlloc(s);
+            arena->current->next->block = M1S_ALLOC(s);
             arena->current->next->size = s;
             arena->current->next->end = 0;
             arena->current->next->next = NULL;
@@ -262,7 +270,7 @@ void ArrayGrow(void *arr, usize elemSize, usize addLen, usize minCap)
         usize minLen = addLen;
         if (minLen > minCap) minCap = minLen;
 
-        a = PlatformAlloc(elemSize*minCap+sizeof(ArrayHeader));
+        a = M1S_ALLOC(elemSize*minCap+sizeof(ArrayHeader));
         a = ((ArrayHeader*)a)+1;
         ArrayHdr(a)->cap = minCap;
         ArrayHdr(a)->len = 0;
@@ -277,12 +285,12 @@ void ArrayGrow(void *arr, usize elemSize, usize addLen, usize minCap)
     if (minCap < ArrayCap(a)) minCap = ArrayCap(a);
 
     void *temp = NULL;
-    temp = PlatformAlloc(elemSize*(minCap*2)+sizeof(ArrayHeader));
+    temp = M1S_ALLOC(elemSize*(minCap*2)+sizeof(ArrayHeader));
     temp = ((ArrayHeader*)temp)+1;
     ArrayHdr(temp)->cap = (minCap*2);
     ArrayHdr(temp)->len = (ArrayLen(a));
     MemoryMove(temp, a, elemSize*ArrayLen(a));
-    PlatformFree(ArrayHdr(a));
+    M1S_FREE(ArrayHdr(a));
     (*(void**)arr) = temp;
 }
 
